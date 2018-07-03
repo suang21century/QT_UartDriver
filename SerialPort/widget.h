@@ -7,7 +7,7 @@
 #include <QTimer>
 #include "qcustomplot.h"
 
-#define   _IQ24(A)     static_cast<int32_t>(((A) * 16777216.0))
+#define   _IQ24(A)     static_cast<int32_t>(((A) * 16777216.0))  //强制转换运算符
 
 union byte_4
 {
@@ -57,6 +57,7 @@ private slots:                                 //添加定义串口相关函数
     void updateAA();
     char ConvertHexChar(char ch);
     int  gettype(QString text);
+    int  getid(QString text);
     void on_pushButton_send_clicked();
     void init_plot();
     void on_pushButton_zero_clicked();

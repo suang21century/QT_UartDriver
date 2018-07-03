@@ -31,6 +31,7 @@ double ts=0.01;//采样时间为100Hz
 int timercnt=0;//时间事件计数器
 QByteArray txtemp;
 float senddata;
+int ID;
 
 void Widget:: init_plot()  //plot初始化函数，需在类中声明
 {
@@ -67,18 +68,33 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->comboBox_type->addItem(QWidget::tr("位置指令"));
-    ui->comboBox_type->addItem(QWidget::tr("传动比"));
+    ui->comboBox_type->addItem(QWidget::tr("位置指令"));         //下拉菜单1初始化
     ui->comboBox_type->addItem(QWidget::tr("位置Kp"));
+    ui->comboBox_type->addItem(QWidget::tr("位置Ki"));
+    ui->comboBox_type->addItem(QWidget::tr("速度Kp"));
+    ui->comboBox_type->addItem(QWidget::tr("速度Ki"));
+    ui->comboBox_type->addItem(QWidget::tr("IqKp"));
+    ui->comboBox_type->addItem(QWidget::tr("IqKi"));
+    ui->comboBox_type->addItem(QWidget::tr("IdKp"));
+    ui->comboBox_type->addItem(QWidget::tr("IdKi"));
+    ui->comboBox_type->addItem(QWidget::tr("减速比"));
+    ui->comboBox_type->addItem(QWidget::tr("电流指令"));
+
+
+    ui->comboBox_id->addItem(QWidget::tr("11"));               //下拉菜单2初始化
+    ui->comboBox_id->addItem(QWidget::tr("12"));
+    ui->comboBox_id->addItem(QWidget::tr("13"));
+    ui->comboBox_id->addItem(QWidget::tr("14"));
+    ui->comboBox_id->addItem(QWidget::tr("15"));
 
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())//查找com口设备
     {
         qDebug() << "Name        : " << info.portName();
         qDebug() << "Description : " << info.description();
-        qDebug() << "Manufacturer: " << info.manufacturer();//打印设备信息
+        qDebug() << "Manufacturer: " << info.manufacturer();   //打印设备信息
 
         // Example use QSerialPort
-        QSerialPort serial;                        //定义串口对象
+        QSerialPort serial;                                    //定义串口对象
         serial.setPort(info);
         if (serial.open(QIODevice::ReadWrite))
         {
@@ -86,7 +102,7 @@ Widget::Widget(QWidget *parent) :
             serial.close();
         }
     }
-    init_plot();
+    init_plot();                                              //绘图类初始化
 
 }
 
@@ -129,7 +145,7 @@ void Widget::on_pushButton_cmopen_clicked()                      //open按钮槽
     }
 }
 
-void Widget::plot_update(QCustomPlot *customPlot) //绘图更新
+void Widget::plot_update(QCustomPlot *customPlot) //绘图更新函数
 {
 
 
@@ -172,9 +188,27 @@ void Widget::plot_update(QCustomPlot *customPlot) //绘图更新
     //qDebug()<<readcnt1;
     customPlot->replot();
 }
-void Widget::updateAA()                 //数据更新，串口接收
+
+int Widget::getid(QString text)
 {
-    timercnt++;
+  if(text=="11")
+      return 0x11;
+  else if(text=="12")
+      return 0x12;
+  else if(text=="13")
+      return 0x13;
+  else if(text=="14")
+      return 0x14;
+  else if(text=="15")
+      return 0x15;
+  else return 0x11;
+}
+
+void Widget::updateAA()                 //数据更新，串口接收，处理
+{
+    //timercnt++;
+    ID=getid(ui->comboBox_id->currentText());       //获取当前选择的驱动器ID号
+
     int readdata_tmp;      //暂存
     int i=0,i1=0;
     int byteLeng = my_serialport->bytesAvailable(); //返回串口缓冲区字节数
@@ -191,18 +225,18 @@ void Widget::updateAA()                 //数据更新，串口接收
           switch(readcnt)
           {
             case 0:
-              if(readdata_tmp==18) readcnt=1; //0x12  ID
+              if(readdata_tmp==ID) readcnt=1; //0x12  ID
             break;
             case 1:
-              if(readdata_tmp==85) readcnt=2;//0x55 帧头
+              if(readdata_tmp==0x55) readcnt=2;//0x55 帧头
               else  readcnt=0;
             break;
             case 2:
-              if(readdata_tmp==1) readcnt=3;//0x01
+              if(readdata_tmp==0x01) readcnt=3;//0x01
               else  readcnt=0;
             break;
             case 3:
-              if(readdata_tmp==18) readcnt=4;//0x12判断长度
+              if(readdata_tmp==0x12) readcnt=4;//0x12判断长度
               else  readcnt=0;
             break;
             case 4:
@@ -339,28 +373,46 @@ char Widget::ConvertHexChar(char ch)
 int Widget::gettype(QString text)
 {
   if(text=="位置指令")
-      return 0;
-  else if(text=="传动比")
-      return 1;
+      return 0x0;
   else if(text=="位置Kp")
-      return 2;
+      return 0x01;
+  else if(text=="位置Ki")
+      return 0x02;
+  else if(text=="速度Kp")
+      return 0x03;
+  else if(text=="速度Ki")
+      return 0x04;
+  else if(text=="IqKp")
+      return 0x05;
+  else if(text=="IqKi")
+      return 0x06;
+  else if(text=="IdKp")
+      return 0x07;
+  else if(text=="IdKi")
+      return 0x08;
+  else if(text=="减速比")
+      return 0x09;
+  else if(text=="电流指令")
+      return 0x0A;
   else return 0;
 }
 
 void Widget::on_pushButton_send_clicked()//发送指令按键事件
 {
-    senddata = ui->lineEdit_data->text().toFloat();//读取输入框内数据，转换为float
-    convn.data=_IQ24(senddata);  //float转换为IQ24的int类型，4字节，存入共同体内
     QByteArray TxData;
     int check;
     int type;
+
+    type=gettype(ui->comboBox_type->currentText());//获取下拉菜单中数据类型
+    senddata = ui->lineEdit_data->text().toFloat();//读取输入框内数据，转换为float
+    convn.data=_IQ24(senddata);  //float转换为IQ24的int类型，4字节，存入共同体内
+
     TxData.resize(15);
     TxData[0]=0x7E;
     TxData[1]=0x5A;
-    TxData[2]=0x12;//ID
+    TxData[2]=ID;//ID
     TxData[3]=0x0A;
     TxData[4]=0xAA;//header
-    type=gettype(ui->comboBox_type->currentText());
     TxData[5]=type;
     check=type;
     TxData[6]=0x07;
@@ -387,7 +439,7 @@ void Widget::on_pushButton_zero_clicked()
     TxData.resize(15);
     TxData[0]=0x7E;
     TxData[1]=0x5A;
-    TxData[2]=0x12;
+    TxData[2]=ID;
     TxData[3]=0x0A;
     TxData[4]=0xAA;
     TxData[5]=0x11;
@@ -411,7 +463,7 @@ void Widget::on_pushButton_on_clicked()
         TxData.resize(15);
         TxData[0]=0x7E;
         TxData[1]=0x5A;
-        TxData[2]=0x12;
+        TxData[2]=ID;
         TxData[3]=0x0A;
         TxData[4]=0xAA;
         TxData[5]=0x10;
@@ -433,7 +485,7 @@ void Widget::on_pushButton_on_clicked()
         TxData.resize(15);
         TxData[0]=0x7E;
         TxData[1]=0x5A;
-        TxData[2]=0x12;
+        TxData[2]=ID;
         TxData[3]=0x0A;
         TxData[4]=0xAA;
         TxData[5]=0x10;
