@@ -9,6 +9,8 @@
 
 #define   _IQ24(A)     static_cast<int32_t>(((A) * 16777216.0))  //强制转换运算符
 
+
+
 union byte_4
 {
    int data;
@@ -19,23 +21,32 @@ union byte_4
 
 struct Status_Bits
 {                               // bits description
-quint16  Flag_Status : 2;             // 1:0 电机状态
-quint16  Flag_Idc    : 1;             // 2 idc过流故障检测标志位
-quint16  Flag_Drv    : 1;             // 3 驱动故障检测标志位
-quint16  Flag_Ia     : 1;             // 4 Ia过流
-quint16  Flag_Ib     : 1;             // 5 Ib过流
-quint16  Flag_Sta2   : 1;             // 6 状态2堵转
-quint16  Flag_Lock   : 1;             // 7 状态1堵转
-quint16  Flag_Mode   : 1;             // 8 控制模式
-quint16  rsvd1       : 7;             // 15:9  reserved
+    quint16  Mode         : 4;             //工作模式
+    quint16  MotorStatus  : 4;             //电机工作状态
+    quint16  rsvd1        : 8;             // 15:8  reserved
 };
 union Status_REG
 {
   quint16 all;
-  quint8 read[2];
   struct Status_Bits bit;
 };
-
+struct Err_Bits
+{                               // bits description
+    quint16  Err_OverCurrent  : 1;             //过流  0
+    quint16  Err_Tem          : 1;             //过温
+    quint16  Err_OverV        : 1;             // 过压
+    quint16  Err_Locked       : 1;             //堵转
+    quint16  Err_Driver       : 1;    //驱动故障
+    quint16  Err_Feed         : 1;    //反馈故障
+    quint16  Err_Com          : 1;    //通讯错误
+    quint16  Com_Read         : 1;    //接收一帧标志   6
+    quint16  rsvd1        : 8;             // 15:8  reserved
+};
+union Err_REG
+{
+  quint16 all;
+  struct Err_Bits bit;
+};
 namespace Ui {
 class Widget;
 }
@@ -52,12 +63,13 @@ public:
 
     byte_4 convn;
     Status_REG status_tmp;
+    Err_REG  Err;
+
 private slots:                                 //添加定义串口相关函数
     void on_pushButton_cmopen_clicked();
     void updateAA();
-    char ConvertHexChar(char ch);
-    int  gettype(QString text);
-    int  getid(QString text);
+    void signalsend();
+    int  getmode(QString text);
     void on_pushButton_send_clicked();
     void init_plot();
     void on_pushButton_zero_clicked();
@@ -66,7 +78,31 @@ private slots:                                 //添加定义串口相关函数
 
     void on_pushButton_xy_clicked();
 
-    void on_pushButton_id_clicked();
+    void on_pushButton_mode_clicked();
+
+    void on_pushButton_com_clicked();
+
+    void on_pushButton_dir_clicked();
+
+    void on_pushButton_write_clicked();
+
+    void on_pushButton_para_clicked();
+
+    void on_pushButton_Loc1_clicked();
+
+    void on_pushButton_Loc2_clicked();
+
+    void on_pushButton_Spd1_clicked();
+
+    void on_pushButton_Spd2_clicked();
+
+    void on_pushButton_I1_clicked();
+
+    void on_pushButton_I2_clicked();
+
+    void on_checkBox_clicked();
+
+    void on_pushButton_Sine_clicked();
 
 private:                                       //添加定义指针对象和数组变量
     Ui::Widget *ui;
