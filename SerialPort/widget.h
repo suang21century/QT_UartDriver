@@ -104,6 +104,18 @@ private slots:                                 //添加定义串口相关函数
 
     void on_pushButton_Sine_clicked();
 
+    void on_pushButton_Uq_clicked();
+
+    void on_pushButton_Ud_clicked();
+
+    void on_pushButton_Uq_2_clicked();
+
+    void on_pushButton_Run1_clicked();
+
+    void on_pushButton_Dir1_clicked();
+
+    void on_pushButton_Dir2_clicked();
+
 private:                                       //添加定义指针对象和数组变量
     Ui::Widget *ui;
     QSerialPort *my_serialport;

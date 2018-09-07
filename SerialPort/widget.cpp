@@ -80,6 +80,7 @@ Widget::Widget(QWidget *parent) :
     ui->comboBox_mode->addItem(QWidget::tr("速度模式"));
     ui->comboBox_mode->addItem(QWidget::tr("电流模式"));
     ui->comboBox_mode->addItem(QWidget::tr("回零模式"));
+    ui->comboBox_mode->addItem(QWidget::tr("开环模式"));
     ui->comboBox_mode->addItem(QWidget::tr("找初始角"));
 
 
@@ -432,6 +433,8 @@ int Widget::getmode(QString text)
       return 0x03;
   else if(text=="找初始角")
       return 0x04;
+  else if(text=="开环模式")
+      return 0x05;
   else return 0;
 }
 
@@ -1034,5 +1037,160 @@ void Widget::on_pushButton_Sine_clicked()
     {
        sinestatus=0;
        ui->pushButton_Sine->setText(tr("开启"));
+    }
+}
+
+void Widget::on_pushButton_Uq_clicked()
+{
+    QByteArray TxData;
+    int check;
+    //Uq
+    senddata = ui->lineEdit_Uq->text().toFloat();//读取输入框内数据，转换为float
+    convn.data=(int32_t)(senddata*10000);  //float转换为int类型，4字节，存入共同体内
+    TxData.resize(8);
+    TxData[0]=0xAA;//header
+    TxData[1]=0x33;
+    check=0x33;
+    TxData[2]=convn.byte[3];//高字节
+    check+=TxData[2];
+    TxData[3]=convn.byte[2];
+    check+=TxData[3];
+    TxData[4]=convn.byte[1];
+    check+=TxData[4];
+    TxData[5]=convn.byte[0];
+    check+=TxData[5];
+    TxData[6]=check&0xFF;  //check
+    TxData[7]=0x0A;
+    my_serialport->write(TxData);
+}
+
+void Widget::on_pushButton_Ud_clicked()
+{
+    QByteArray TxData;
+    int check;
+    //Ud
+    senddata = ui->lineEdit_Ud->text().toFloat();//读取输入框内数据，转换为float
+    convn.data=(int32_t)(senddata*10000);  //float转换为int类型，4字节，存入共同体内
+    TxData.resize(8);
+    TxData[0]=0xAA;//header
+    TxData[1]=0x34;
+    check=0x34;
+    TxData[2]=convn.byte[3];//高字节
+    check+=TxData[2];
+    TxData[3]=convn.byte[2];
+    check+=TxData[3];
+    TxData[4]=convn.byte[1];
+    check+=TxData[4];
+    TxData[5]=convn.byte[0];
+    check+=TxData[5];
+    TxData[6]=check&0xFF;  //check
+    TxData[7]=0x0A;
+    my_serialport->write(TxData);
+}
+
+void Widget::on_pushButton_Uq_2_clicked()
+{
+    QByteArray TxData;
+    int check;
+    //Uq
+    senddata = ui->lineEdit_Uq_2->text().toFloat();//读取输入框内数据，转换为float
+    convn.data=(int32_t)(senddata*10000);  //float转换为int类型，4字节，存入共同体内
+    TxData.resize(8);
+    TxData[0]=0xAA;//header
+    TxData[1]=0x33;
+    check=0x33;
+    TxData[2]=convn.byte[3];//高字节
+    check+=TxData[2];
+    TxData[3]=convn.byte[2];
+    check+=TxData[3];
+    TxData[4]=convn.byte[1];
+    check+=TxData[4];
+    TxData[5]=convn.byte[0];
+    check+=TxData[5];
+    TxData[6]=check&0xFF;  //check
+    TxData[7]=0x0A;
+    my_serialport->write(TxData);
+}
+
+void Widget::on_pushButton_Run1_clicked()  //模式4下旋转一周
+{
+    QByteArray TxData;
+    TxData.resize(8);
+    TxData[0]=0xAA;
+    TxData[1]=0x13;
+    TxData[2]=0x00;
+    TxData[3]=0x00;
+    TxData[4]=0x00;
+    TxData[5]=0x14;
+    TxData[6]=0x27;
+    TxData[7]=0x0A;
+    my_serialport->write(TxData);
+}
+
+void Widget::on_pushButton_Dir1_clicked()//增量反向
+{
+    if(ui->pushButton_Dir1->text()==tr("增量同向"))
+    {
+        QByteArray TxData;
+        TxData.resize(8);
+        TxData[0]=0xAA;
+        TxData[1]=0x16;
+        TxData[2]=0x00;
+        TxData[3]=0x00;
+        TxData[4]=0x00;
+        TxData[5]=0x01;
+        TxData[6]=0x17;
+        TxData[7]=0x0A;
+        my_serialport->write(TxData);
+        ui->pushButton_Dir1->setText(tr("增量反向"));                //按钮显示
+    }
+    else
+    {
+        QByteArray TxData;
+        TxData.resize(8);
+        TxData[0]=0xAA;
+        TxData[1]=0x16;
+        TxData[2]=0x00;
+        TxData[3]=0x00;
+        TxData[4]=0x00;
+        TxData[5]=0x00;
+        TxData[6]=0x16;
+        TxData[7]=0x0A;
+        my_serialport->write(TxData);
+        ui->pushButton_Dir1->setText(tr("增量同向"));
+    }
+}
+
+void Widget::on_pushButton_Dir2_clicked()
+{
+    if(ui->pushButton_Dir2->text()==tr("霍尔同向"))
+    {
+        QByteArray TxData;
+        TxData.resize(8);
+        TxData[0]=0xAA;
+        TxData[1]=0x17;
+        TxData[2]=0x00;
+        TxData[3]=0x00;
+        TxData[4]=0x00;
+        TxData[5]=0x01;
+        TxData[6]=0x18;
+        TxData[7]=0x0A;
+        my_serialport->write(TxData);
+        ui->pushButton_Dir2->setText(tr("霍尔反向"));                //按钮显示
+    }
+    else
+    {
+        QByteArray TxData;
+        TxData.resize(8);
+        TxData[0]=0xAA;
+        TxData[1]=0x17;
+        TxData[2]=0x00;
+        TxData[3]=0x00;
+        TxData[4]=0x00;
+        TxData[5]=0x00;
+        TxData[6]=0x17;
+        TxData[7]=0x0A;
+        my_serialport->write(TxData);
+        ui->pushButton_Dir2->setText(tr("霍尔同向"));
     }
 }
