@@ -16,7 +16,7 @@
   <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
-     <x>1060</x>
+     <x>1020</x>
      <y>20</y>
      <width>251</width>
      <height>111</height>
@@ -115,27 +115,11 @@
    <property name="frameShadow">
     <enum>QFrame::Raised</enum>
    </property>
-   <widget class="QPushButton" name="pushButton_zero">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>220</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(222, 222, 222);</string>
-    </property>
-    <property name="text">
-     <string>校零</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButton_on">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>110</y>
+      <x>170</x>
+      <y>20</y>
       <width>91</width>
       <height>51</height>
      </rect>
@@ -145,32 +129,6 @@
     </property>
     <property name="text">
      <string>电机启动</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="widget_status" native="true">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>40</y>
-      <width>31</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>50</y>
-      <width>54</width>
-      <height>12</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>状态灯：</string>
     </property>
    </widget>
    <widget class="QComboBox" name="comboBox_mode">
@@ -202,8 +160,8 @@
    <widget class="QPushButton" name="pushButton_com">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>50</y>
+      <x>50</x>
+      <y>40</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -213,22 +171,6 @@
     </property>
     <property name="text">
      <string>连接通讯</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_dir">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>220</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(222, 222, 222);</string>
-    </property>
-    <property name="text">
-     <string>传动同向</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_write">
@@ -474,9 +416,9 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>260</x>
+      <x>230</x>
       <y>90</y>
-      <width>261</width>
+      <width>301</width>
       <height>341</height>
      </rect>
     </property>
@@ -484,7 +426,7 @@
      <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -929,6 +871,22 @@
        <string>速度I</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="pushButton_send2">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>180</y>
+        <width>41</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(222, 222, 222);</string>
+      </property>
+      <property name="text">
+       <string>确定</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
@@ -1035,7 +993,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>230</y>
+        <y>220</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -1048,7 +1006,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>200</y>
+        <y>190</y>
         <width>54</width>
         <height>12</height>
        </rect>
@@ -1061,7 +1019,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>230</y>
+        <y>220</y>
         <width>54</width>
         <height>12</height>
        </rect>
@@ -1074,13 +1032,150 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>200</y>
+        <y>190</y>
         <width>113</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
        <string>0.3</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_send3">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>180</y>
+        <width>41</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(222, 222, 222);</string>
+      </property>
+      <property name="text">
+       <string>确定</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_6">
+     <attribute name="title">
+      <string>回零</string>
+     </attribute>
+     <widget class="QPushButton" name="pushButton_Uq_3">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>40</y>
+        <width>61</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(222, 222, 222);</string>
+      </property>
+      <property name="text">
+       <string>回零执行</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_Uq_3">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>40</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0.1</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_38">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>54</width>
+        <height>12</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Uq指令</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_dir5">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>180</y>
+        <width>81</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(222, 222, 222);</string>
+      </property>
+      <property name="text">
+       <string>绝对同向</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_zero">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>250</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(222, 222, 222);</string>
+      </property>
+      <property name="text">
+       <string>校零</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_Offset">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>130</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_Offset">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>130</y>
+        <width>61</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(222, 222, 222);</string>
+      </property>
+      <property name="text">
+       <string>确定</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_39">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>100</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>绝对编码器设置</string>
       </property>
      </widget>
     </widget>
@@ -1140,7 +1235,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>0</string>
+       <string>0.1</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="lineEdit_Ud">
@@ -1170,6 +1265,67 @@
       </property>
       <property name="text">
        <string>&gt;</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_Dir3">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>120</y>
+        <width>81</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(222, 222, 222);</string>
+      </property>
+      <property name="text">
+       <string>电流同向</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_Dir4">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>160</y>
+        <width>81</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(222, 222, 222);</string>
+      </property>
+      <property name="text">
+       <string>速度同向</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_dir">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>200</y>
+        <width>81</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(222, 222, 222);</string>
+      </property>
+      <property name="text">
+       <string>位置同向</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_37">
+      <property name="geometry">
+       <rect>
+        <x>13</x>
+        <y>202</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>增量解算位置</string>
       </property>
      </widget>
     </widget>
@@ -1216,7 +1372,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>0</string>
+       <string>0.1</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_Run1">
@@ -1268,6 +1424,32 @@
       </property>
      </widget>
     </widget>
+   </widget>
+   <widget class="QComboBox" name="comboBox_loctype">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>90</y>
+      <width>91</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_loctype">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>90</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(222, 222, 222);</string>
+    </property>
+    <property name="text">
+     <string>确定</string>
+    </property>
    </widget>
   </widget>
   <widget class="QFrame" name="frame_3">
@@ -1386,17 +1568,45 @@
   <widget class="QTextEdit" name="textEdit">
    <property name="geometry">
     <rect>
-     <x>1060</x>
+     <x>1020</x>
      <y>140</y>
      <width>251</width>
      <height>41</height>
     </rect>
    </property>
   </widget>
+  <widget class="QWidget" name="widget_status" native="true">
+   <property name="geometry">
+    <rect>
+     <x>1290</x>
+     <y>150</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>1290</x>
+     <y>120</y>
+     <width>54</width>
+     <height>12</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>状态灯</string>
+   </property>
+  </widget>
   <zorder>frame_3</zorder>
   <zorder>frame</zorder>
   <zorder>frame_2</zorder>
   <zorder>textEdit</zorder>
+  <zorder>widget_status</zorder>
+  <zorder>label</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

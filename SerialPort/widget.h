@@ -70,6 +70,7 @@ private slots:                                 //添加定义串口相关函数
     void updateAA();
     void signalsend();
     int  getmode(QString text);
+    int  getloctype(QString text);
     void on_pushButton_send_clicked();
     void init_plot();
     void on_pushButton_zero_clicked();
@@ -115,6 +116,22 @@ private slots:                                 //添加定义串口相关函数
     void on_pushButton_Dir1_clicked();
 
     void on_pushButton_Dir2_clicked();
+
+    void on_pushButton_Dir3_clicked();
+
+    void on_pushButton_Dir4_clicked();
+
+    void on_pushButton_send2_clicked();
+
+    void on_pushButton_send3_clicked();
+
+    void on_pushButton_loctype_clicked();
+
+    void on_pushButton_Uq_3_clicked();
+
+    void on_pushButton_dir5_clicked();
+
+    void on_pushButton_Offset_clicked();
 
 private:                                       //添加定义指针对象和数组变量
     Ui::Widget *ui;

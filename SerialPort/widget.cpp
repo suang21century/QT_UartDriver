@@ -58,7 +58,7 @@ void Widget:: init_plot()  //plot初始化函数，需在类中声明
     customPlot->graph(2)->setPen(QPen(Qt::gray));
     customPlot->graph(2)->setName("data3");
     customPlot->addGraph();
-    customPlot->graph(3)->setPen(QPen(Qt::yellow));
+    customPlot->graph(3)->setPen(QPen(Qt::cyan));
     customPlot->graph(3)->setName("data4");
     customPlot->addGraph();
     customPlot->graph(4)->setPen(QPen(Qt::green));
@@ -83,6 +83,10 @@ Widget::Widget(QWidget *parent) :
     ui->comboBox_mode->addItem(QWidget::tr("开环模式"));
     ui->comboBox_mode->addItem(QWidget::tr("找初始角"));
 
+    ui->comboBox_loctype->addItem(QWidget::tr("增量编码器"));
+    ui->comboBox_loctype->addItem(QWidget::tr("BISSC"));
+    ui->comboBox_loctype->addItem(QWidget::tr("SPI"));
+    ui->comboBox_loctype->addItem(QWidget::tr("霍尔序列"));
 
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())//查找com口设备
     {
@@ -386,7 +390,8 @@ void Widget::updateAA()                 //数据更新，串口接收，处理,5
                 }
                 readcnt1=1000;//保持数组个数为1000个
               }
-              QPalette pal(ui->widget_status->palette());   //声明控件颜色板
+              //this->setAutoFillBackground(true);
+              QPalette pal(ui->widget_status->palette());   //声明控件颜色板,需处于父类地位，否则无效
               if((Err.all&0x007F)==0)                //判断状态正常时显示绿色
               {
                   pal.setColor(QPalette::Background, Qt::green);
@@ -401,6 +406,7 @@ void Widget::updateAA()                 //数据更新，串口接收，处理,5
                   ui->widget_status->setPalette(pal);
                   ui->widget_status->show();
               }
+
               if((Err.all&0x0080)==0x0080)                //接收一帧标志
               {
                 readok++;
@@ -438,7 +444,7 @@ int Widget::getmode(QString text)
   else return 0;
 }
 
-void Widget::on_pushButton_send_clicked()//发送PI参数按键事件
+void Widget::on_pushButton_send_clicked()//发送LOC PI参数按键事件
 {
     QByteArray TxData;
     int check;
@@ -478,78 +484,7 @@ void Widget::on_pushButton_send_clicked()//发送PI参数按键事件
     TxData[6]=check&0xFF;  //check
     TxData[7]=0x0A;
     my_serialport->write(TxData);
-    //SpdKp
-    senddata = ui->lineEdit_SpdP->text().toFloat();//读取输入框内数据，转换为float
-    convn.data=(int32_t)(senddata*10000);  //float转换为int类型，4字节，存入共同体内
-    TxData.resize(8);
-    TxData[0]=0xAA;//header
-    TxData[1]=0x23;
-    check=0x23;
-    TxData[2]=convn.byte[3];//高字节
-    check+=TxData[2];
-    TxData[3]=convn.byte[2];
-    check+=TxData[3];
-    TxData[4]=convn.byte[1];
-    check+=TxData[4];
-    TxData[5]=convn.byte[0];
-    check+=TxData[5];
-    TxData[6]=check&0xFF;  //check
-    TxData[7]=0x0A;
-    my_serialport->write(TxData);
-    //SpdKi
-    senddata = ui->lineEdit_SpdI->text().toFloat();//读取输入框内数据，转换为float
-    convn.data=(int32_t)(senddata*10000);  //float转换为int类型，4字节，存入共同体内
-    TxData.resize(8);
-    TxData[0]=0xAA;//header
-    TxData[1]=0x24;
-    check=0x24;
-    TxData[2]=convn.byte[3];//高字节
-    check+=TxData[2];
-    TxData[3]=convn.byte[2];
-    check+=TxData[3];
-    TxData[4]=convn.byte[1];
-    check+=TxData[4];
-    TxData[5]=convn.byte[0];
-    check+=TxData[5];
-    TxData[6]=check&0xFF;  //check
-    TxData[7]=0x0A;
-    my_serialport->write(TxData);
-    //IKp
-    senddata = ui->lineEdit_IP->text().toFloat();//读取输入框内数据，转换为float
-    convn.data=(int32_t)(senddata*10000);  //float转换为int类型，4字节，存入共同体内
-    TxData.resize(8);
-    TxData[0]=0xAA;//header
-    TxData[1]=0x25;
-    check=0x25;
-    TxData[2]=convn.byte[3];//高字节
-    check+=TxData[2];
-    TxData[3]=convn.byte[2];
-    check+=TxData[3];
-    TxData[4]=convn.byte[1];
-    check+=TxData[4];
-    TxData[5]=convn.byte[0];
-    check+=TxData[5];
-    TxData[6]=check&0xFF;  //check
-    TxData[7]=0x0A;
-    my_serialport->write(TxData);
-    //IKi
-    senddata = ui->lineEdit_II->text().toFloat();//读取输入框内数据，转换为float
-    convn.data=(int32_t)(senddata*10000);  //float转换为int类型，4字节，存入共同体内
-    TxData.resize(8);
-    TxData[0]=0xAA;//header
-    TxData[1]=0x26;
-    check=0x26;
-    TxData[2]=convn.byte[3];//高字节
-    check+=TxData[2];
-    TxData[3]=convn.byte[2];
-    check+=TxData[3];
-    TxData[4]=convn.byte[1];
-    check+=TxData[4];
-    TxData[5]=convn.byte[0];
-    check+=TxData[5];
-    TxData[6]=check&0xFF;  //check
-    TxData[7]=0x0A;
-    my_serialport->write(TxData);
+
 }
 
 void Widget::on_pushButton_zero_clicked() //较零
@@ -670,7 +605,7 @@ void Widget::on_pushButton_com_clicked()
 
 void Widget::on_pushButton_dir_clicked()
 {
-    if(ui->pushButton_dir->text()==tr("传动同向"))
+    if(ui->pushButton_dir->text()==tr("位置同向"))
     {
         QByteArray TxData;
         TxData.resize(8);
@@ -683,7 +618,7 @@ void Widget::on_pushButton_dir_clicked()
         TxData[6]=0x13;
         TxData[7]=0x0A;
         my_serialport->write(TxData);
-        ui->pushButton_dir->setText(tr("传动反向"));                //按钮显示
+        ui->pushButton_dir->setText(tr("位置反向"));                //按钮显示
     }
     else
     {
@@ -698,7 +633,7 @@ void Widget::on_pushButton_dir_clicked()
         TxData[6]=0x12;
         TxData[7]=0x0A;
         my_serialport->write(TxData);
-        ui->pushButton_dir->setText(tr("传动同向"));
+        ui->pushButton_dir->setText(tr("位置同向"));
     }
 }
 
@@ -1193,4 +1128,277 @@ void Widget::on_pushButton_Dir2_clicked()
         my_serialport->write(TxData);
         ui->pushButton_Dir2->setText(tr("霍尔同向"));
     }
+}
+
+void Widget::on_pushButton_Dir3_clicked()
+{
+    if(ui->pushButton_Dir3->text()==tr("电流同向"))
+    {
+        QByteArray TxData;
+        TxData.resize(8);
+        TxData[0]=0xAA;
+        TxData[1]=0x18;
+        TxData[2]=0x00;
+        TxData[3]=0x00;
+        TxData[4]=0x00;
+        TxData[5]=0x01;
+        TxData[6]=0x19;
+        TxData[7]=0x0A;
+        my_serialport->write(TxData);
+        ui->pushButton_Dir3->setText(tr("电流反向"));                //按钮显示
+    }
+    else
+    {
+        QByteArray TxData;
+        TxData.resize(8);
+        TxData[0]=0xAA;
+        TxData[1]=0x18;
+        TxData[2]=0x00;
+        TxData[3]=0x00;
+        TxData[4]=0x00;
+        TxData[5]=0x00;
+        TxData[6]=0x18;
+        TxData[7]=0x0A;
+        my_serialport->write(TxData);
+        ui->pushButton_Dir3->setText(tr("电流同向"));
+    }
+}
+
+void Widget::on_pushButton_Dir4_clicked()
+{
+    if(ui->pushButton_Dir4->text()==tr("速度同向"))
+    {
+        QByteArray TxData;
+        TxData.resize(8);
+        TxData[0]=0xAA;
+        TxData[1]=0x19;
+        TxData[2]=0x00;
+        TxData[3]=0x00;
+        TxData[4]=0x00;
+        TxData[5]=0x01;
+        TxData[6]=0x1A;
+        TxData[7]=0x0A;
+        my_serialport->write(TxData);
+        ui->pushButton_Dir4->setText(tr("速度反向"));                //按钮显示
+    }
+    else
+    {
+        QByteArray TxData;
+        TxData.resize(8);
+        TxData[0]=0xAA;
+        TxData[1]=0x19;
+        TxData[2]=0x00;
+        TxData[3]=0x00;
+        TxData[4]=0x00;
+        TxData[5]=0x00;
+        TxData[6]=0x19;
+        TxData[7]=0x0A;
+        my_serialport->write(TxData);
+        ui->pushButton_Dir4->setText(tr("速度同向"));
+    }
+}
+
+void Widget::on_pushButton_send2_clicked()  //发送速度pi参数
+{
+    QByteArray TxData;
+    int check;
+    //SpdKp
+    senddata = ui->lineEdit_SpdP->text().toFloat();//读取输入框内数据，转换为float
+    convn.data=(int32_t)(senddata*10000);  //float转换为int类型，4字节，存入共同体内
+    TxData.resize(8);
+    TxData[0]=0xAA;//header
+    TxData[1]=0x23;
+    check=0x23;
+    TxData[2]=convn.byte[3];//高字节
+    check+=TxData[2];
+    TxData[3]=convn.byte[2];
+    check+=TxData[3];
+    TxData[4]=convn.byte[1];
+    check+=TxData[4];
+    TxData[5]=convn.byte[0];
+    check+=TxData[5];
+    TxData[6]=check&0xFF;  //check
+    TxData[7]=0x0A;
+    my_serialport->write(TxData);
+    //SpdKi
+    senddata = ui->lineEdit_SpdI->text().toFloat();//读取输入框内数据，转换为float
+    convn.data=(int32_t)(senddata*10000);  //float转换为int类型，4字节，存入共同体内
+    TxData.resize(8);
+    TxData[0]=0xAA;//header
+    TxData[1]=0x24;
+    check=0x24;
+    TxData[2]=convn.byte[3];//高字节
+    check+=TxData[2];
+    TxData[3]=convn.byte[2];
+    check+=TxData[3];
+    TxData[4]=convn.byte[1];
+    check+=TxData[4];
+    TxData[5]=convn.byte[0];
+    check+=TxData[5];
+    TxData[6]=check&0xFF;  //check
+    TxData[7]=0x0A;
+    my_serialport->write(TxData);
+
+}
+
+void Widget::on_pushButton_send3_clicked() //发送电流pi参数
+{
+    QByteArray TxData;
+    int check;
+    //IKp
+    senddata = ui->lineEdit_IP->text().toFloat();//读取输入框内数据，转换为float
+    convn.data=(int32_t)(senddata*10000);  //float转换为int类型，4字节，存入共同体内
+    TxData.resize(8);
+    TxData[0]=0xAA;//header
+    TxData[1]=0x25;
+    check=0x25;
+    TxData[2]=convn.byte[3];//高字节
+    check+=TxData[2];
+    TxData[3]=convn.byte[2];
+    check+=TxData[3];
+    TxData[4]=convn.byte[1];
+    check+=TxData[4];
+    TxData[5]=convn.byte[0];
+    check+=TxData[5];
+    TxData[6]=check&0xFF;  //check
+    TxData[7]=0x0A;
+    my_serialport->write(TxData);
+    //IKi
+    senddata = ui->lineEdit_II->text().toFloat();//读取输入框内数据，转换为float
+    convn.data=(int32_t)(senddata*10000);  //float转换为int类型，4字节，存入共同体内
+    TxData.resize(8);
+    TxData[0]=0xAA;//header
+    TxData[1]=0x26;
+    check=0x26;
+    TxData[2]=convn.byte[3];//高字节
+    check+=TxData[2];
+    TxData[3]=convn.byte[2];
+    check+=TxData[3];
+    TxData[4]=convn.byte[1];
+    check+=TxData[4];
+    TxData[5]=convn.byte[0];
+    check+=TxData[5];
+    TxData[6]=check&0xFF;  //check
+    TxData[7]=0x0A;
+    my_serialport->write(TxData);
+}
+
+int Widget::getloctype(QString text)
+{
+  if(text=="增量编码器")
+      return 0x01;
+  else if(text=="BISSC")
+      return 0x02;
+  else if(text=="SPI")
+      return 0x03;
+  else if(text=="霍尔序列")
+      return 0x04;
+  else return 0x01;
+}
+
+void Widget::on_pushButton_loctype_clicked()//发送位置反馈类型
+{
+    QByteArray TxData;
+    int check;
+    int locmode;
+
+    locmode=getloctype(ui->comboBox_loctype->currentText());//获取下拉菜单中操作模式
+    convn.data=(int32_t)locmode;
+    TxData.resize(8);
+    TxData[0]=0xAA;//header
+    TxData[1]=0x1A;
+    check=0x1A;
+    TxData[2]=convn.byte[3];//高字节
+    check+=TxData[2];
+    TxData[3]=convn.byte[2];
+    check+=TxData[3];
+    TxData[4]=convn.byte[1];
+    check+=TxData[4];
+    TxData[5]=convn.byte[0];
+    check+=TxData[5];
+    TxData[6]=check&0xFF;  //check
+    TxData[7]=0x0A;
+    my_serialport->write(TxData);
+}
+
+void Widget::on_pushButton_Uq_3_clicked()
+{
+    QByteArray TxData;
+    int check;
+    //Uq
+    senddata = ui->lineEdit_Uq_3->text().toFloat();//读取输入框内数据，转换为float
+    convn.data=(int32_t)(senddata*10000);  //float转换为int类型，4字节，存入共同体内
+    TxData.resize(8);
+    TxData[0]=0xAA;//header
+    TxData[1]=0x33;
+    check=0x33;
+    TxData[2]=convn.byte[3];//高字节
+    check+=TxData[2];
+    TxData[3]=convn.byte[2];
+    check+=TxData[3];
+    TxData[4]=convn.byte[1];
+    check+=TxData[4];
+    TxData[5]=convn.byte[0];
+    check+=TxData[5];
+    TxData[6]=check&0xFF;  //check
+    TxData[7]=0x0A;
+    my_serialport->write(TxData);
+}
+
+void Widget::on_pushButton_dir5_clicked()
+{
+    if(ui->pushButton_dir5->text()==tr("绝对同向"))
+    {
+        QByteArray TxData;
+        TxData.resize(8);
+        TxData[0]=0xAA;
+        TxData[1]=0x1B;
+        TxData[2]=0x00;
+        TxData[3]=0x00;
+        TxData[4]=0x00;
+        TxData[5]=0x01;
+        TxData[6]=0x1C;
+        TxData[7]=0x0A;
+        my_serialport->write(TxData);
+        ui->pushButton_dir5->setText(tr("绝对反向"));                //按钮显示
+    }
+    else
+    {
+        QByteArray TxData;
+        TxData.resize(8);
+        TxData[0]=0xAA;
+        TxData[1]=0x1B;
+        TxData[2]=0x00;
+        TxData[3]=0x00;
+        TxData[4]=0x00;
+        TxData[5]=0x00;
+        TxData[6]=0x1B;
+        TxData[7]=0x0A;
+        my_serialport->write(TxData);
+        ui->pushButton_dir5->setText(tr("绝对同向"));
+    }
+}
+
+void Widget::on_pushButton_Offset_clicked()
+{
+    QByteArray TxData;
+    int check;
+    //offset
+    senddata = ui->lineEdit_Offset->text().toFloat();//读取输入框内数据，转换为float
+    convn.data=(int32_t)(senddata*10000);  //float转换为int类型，4字节，存入共同体内
+    TxData.resize(8);
+    TxData[0]=0xAA;//header
+    TxData[1]=0x35;
+    check=0x35;
+    TxData[2]=convn.byte[3];//高字节
+    check+=TxData[2];
+    TxData[3]=convn.byte[2];
+    check+=TxData[3];
+    TxData[4]=convn.byte[1];
+    check+=TxData[4];
+    TxData[5]=convn.byte[0];
+    check+=TxData[5];
+    TxData[6]=check&0xFF;  //check
+    TxData[7]=0x0A;
+    my_serialport->write(TxData);
 }
