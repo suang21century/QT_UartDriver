@@ -133,6 +133,8 @@ private slots:                                 //添加定义串口相关函数
 
     void on_pushButton_Offset_clicked();
 
+    void on_pushButton_Adc_clicked();
+
 private:                                       //添加定义指针对象和数组变量
     Ui::Widget *ui;
     QSerialPort *my_serialport;

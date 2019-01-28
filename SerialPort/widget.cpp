@@ -46,7 +46,7 @@ void Widget:: init_plot()  //plot初始化函数，需在类中声明
     customPlot = new QCustomPlot(this);  //定义类对象
    // setupRealtimeDataDemo(customPlot);
     //setupDataDemo(customPlot);
-    customPlot->setFixedSize(1000,800);
+    customPlot->setFixedSize(900,700);//
 
     customPlot->addGraph();                         //此段初始化放在此处，若在plot_update内存会逐步上升
     customPlot->graph(0)->setPen(QPen(Qt::red));
@@ -87,6 +87,7 @@ Widget::Widget(QWidget *parent) :
     ui->comboBox_loctype->addItem(QWidget::tr("BISSC"));
     ui->comboBox_loctype->addItem(QWidget::tr("SPI"));
     ui->comboBox_loctype->addItem(QWidget::tr("霍尔序列"));
+    ui->comboBox_loctype->addItem(QWidget::tr("SSI"));
 
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())//查找com口设备
     {
@@ -1293,6 +1294,8 @@ int Widget::getloctype(QString text)
       return 0x03;
   else if(text=="霍尔序列")
       return 0x04;
+  else if(text=="SSI")
+      return 0x05;
   else return 0x01;
 }
 
@@ -1390,6 +1393,48 @@ void Widget::on_pushButton_Offset_clicked()
     TxData[0]=0xAA;//header
     TxData[1]=0x35;
     check=0x35;
+    TxData[2]=convn.byte[3];//高字节
+    check+=TxData[2];
+    TxData[3]=convn.byte[2];
+    check+=TxData[3];
+    TxData[4]=convn.byte[1];
+    check+=TxData[4];
+    TxData[5]=convn.byte[0];
+    check+=TxData[5];
+    TxData[6]=check&0xFF;  //check
+    TxData[7]=0x0A;
+    my_serialport->write(TxData);
+}
+
+void Widget::on_pushButton_Adc_clicked()
+{
+    QByteArray TxData;
+    int check;
+    //adc1
+    senddata = ui->lineEdit_Adc1->text().toFloat();//读取输入框内数据，转换为float
+    convn.data=(int32_t)senddata;  //float转换为int类型，4字节，存入共同体内
+    TxData.resize(8);
+    TxData[0]=0xAA;//header
+    TxData[1]=0x36;
+    check=0x36;
+    TxData[2]=convn.byte[3];//高字节
+    check+=TxData[2];
+    TxData[3]=convn.byte[2];
+    check+=TxData[3];
+    TxData[4]=convn.byte[1];
+    check+=TxData[4];
+    TxData[5]=convn.byte[0];
+    check+=TxData[5];
+    TxData[6]=check&0xFF;  //check
+    TxData[7]=0x0A;
+    my_serialport->write(TxData);
+    //adc2
+    senddata = ui->lineEdit_Adc2->text().toFloat();//读取输入框内数据，转换为float
+    convn.data=(int32_t)senddata;  //float转换为int类型，4字节，存入共同体内
+    TxData.resize(8);
+    TxData[0]=0xAA;//header
+    TxData[1]=0x37;
+    check=0x37;
     TxData[2]=convn.byte[3];//高字节
     check+=TxData[2];
     TxData[3]=convn.byte[2];
